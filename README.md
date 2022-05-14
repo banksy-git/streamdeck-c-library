@@ -1,7 +1,8 @@
 # StreamDeck V2 C Library
-#=========================
-# Author: Paul Banks (banksy) - web@paulbanks.org
-#
+
+Author: Paul Banks (banksy) - web@paulbanks.org
+
+## Overview
 
 Lightweight C library for Stream Deck V2.
 
