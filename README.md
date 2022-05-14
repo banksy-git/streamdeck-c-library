@@ -1,6 +1,6 @@
 # StreamDeck V2 C Library
 
-Author: Paul Banks (banksy) - web@paulbanks.org
+Author: Paul Banks (banksy) - web _AT_ paulbanks _DOT_ org
 
 <img src="docs/output.gif" width="640" height="480" alt="Animated GIF showing library" />
 
