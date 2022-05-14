@@ -2,6 +2,8 @@
 
 Author: Paul Banks (banksy) - web@paulbanks.org
 
+<img src="docs/output.gif" width="640" height="480" alt="Animated GIF showing library" />
+
 ## Overview
 
 Lightweight C library for Stream Deck V2.
