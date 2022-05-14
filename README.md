@@ -20,8 +20,8 @@ convert input-image.png -resize 72 -colorspace sRGB -type truecolor -rotate 180 
 
 ## Bugs
 
-* Hardware sometimes indicates multiple keys pressed (>2). We mitigate this by not returning any
-  presses when the number of pressed keys is > 2.
+* Hardware sometimes indicates multiple keys pressed (>2) when just one key is pressed. We return
+  the number of keys pressed. If it's greater than 2 you should discard the result.  
 
 * Hardware can freeze if there's nobody there to read the keypresses. (e.g. you quit the program
   servicing the StreamDeck and then press buttons on it.) You have to re-plug it in those cases.
