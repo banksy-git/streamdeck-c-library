@@ -26,7 +26,7 @@ static int _send_feature_report(
     if (dev == NULL || data == NULL || length > 32)
     {
         errno = EINVAL;
-        return -1;
+        return STREAMDECK_ERROR;
     }
 
     uint8_t buffer[33] = {0};
@@ -43,19 +43,19 @@ int streamdeck_open(
     if (dev == NULL)
     {
         errno = EINVAL;
-        return -1;
+        return STREAMDECK_ERROR;
     }
 
     *dev = calloc(1, sizeof(**dev));
     if (*dev == NULL)
     {
-        return -1;
+        return STREAMDECK_ERROR;
     }
     (*dev)->dev = hid_open(0xfd9, 0x80, NULL);
     if ((*dev)->dev == NULL)
     {
         free(*dev);
-        return -1;
+        return STREAMDECK_ERROR;
     }
     return 0;
 }
@@ -67,11 +67,11 @@ int streamdeck_close(struct streamdeck *dev)
         hid_close(dev->dev);
         dev->dev = NULL;
         free(dev);
-        return 0;
+        return STREAMDECK_OK;
     }
     else
     {
-        return -1;
+        return STREAMDECK_ERROR;
     }
 }
 
@@ -80,7 +80,7 @@ int streamdeck_reset(struct streamdeck *dev)
     if (dev == NULL)
     {
         errno = EINVAL;
-        return -1;
+        return STREAMDECK_ERROR;
     }
     return _send_feature_report(dev->dev, "\x03\x02", 2);
 }
@@ -92,7 +92,7 @@ int streamdeck_set_brightness(
     if (dev == NULL)
     {
         errno = EINVAL;
-        return -1;
+        return STREAMDECK_ERROR;
     }
 
     uint8_t buffer[3] = {0x03, 0x08, percent};
@@ -108,10 +108,10 @@ int streamdeck_set_key_image(
     if (dev == NULL || data == NULL || length <= 0)
     {
         errno = EINVAL;
-        return -1;
+        return STREAMDECK_ERROR;
     }
 
-    int error = 0;
+    int error = STREAMDECK_OK;
     const size_t payload_size = 1024;
     struct image_header *payload = malloc(payload_size);
     if (payload == NULL)
@@ -143,7 +143,7 @@ int streamdeck_set_key_image(
 
         if (hid_write(dev->dev, (uint8_t *)payload, payload_size) == -1)
         {
-            error = -1;
+            error = STREAMDECK_ERROR;
             break;
         }
 
@@ -163,11 +163,11 @@ int streamdeck_read_keys(
     if (dev == NULL || length > 32)
     {
         errno = EINVAL;
-        return -1;
+        return STREAMDECK_ERROR;
     }
     if (hid_read(dev->dev, data, 4 + length) == -1)
     {
-        return -1;
+        return STREAMDECK_ERROR;
     }
 
     // More than two is probably invalid given how the hardware
@@ -179,15 +179,10 @@ int streamdeck_read_keys(
         if (data[i + 4] != 0)
         {
             pressed_count += 1;
-            if (pressed_count > 2)
-            {
-                memset(keystate, 0, length);
-                return 0;
-            }
         }
     }
 
     memcpy(keystate, data + 4, length);
 
-    return 0;
+    return pressed_count;
 }

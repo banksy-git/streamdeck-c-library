@@ -3,6 +3,9 @@
 
 #include <hidapi/hidapi.h>
 
+#define STREAMDECK_OK (0)
+#define STREAMDECK_ERROR (-1)
+
 struct streamdeck
 {
     hid_device *dev;

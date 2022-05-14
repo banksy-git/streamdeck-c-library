@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     int res;
     struct streamdeck *sd;
 
-    if (streamdeck_open(&sd, 0xfd9, 0x80, NULL) == -1)
+    if (streamdeck_open(&sd, 0xfd9, 0x80, NULL) == STREAMDECK_ERROR)
     {
         error_exit("Failed to open device.");
     }
@@ -47,21 +47,21 @@ int main(int argc, char *argv[])
     // Load button pictures
     uint8_t *green;
     size_t green_length;
-    if (load_file("green.jpg", &green, &green_length) != 0)
+    if (load_file("green.jpg", &green, &green_length) != STREAMDECK_OK)
     {
         error_exit("Failed to read green image");
     }
 
     uint8_t *black;
     size_t black_length;
-    if (load_file("black.jpg", &black, &black_length) != 0)
+    if (load_file("black.jpg", &black, &black_length) != STREAMDECK_OK)
     {
         error_exit("Failed to read black image");
     }
 
     uint8_t *exit;
     size_t exit_length;
-    if (load_file("exit.jpg", &exit, &exit_length) != 0)
+    if (load_file("exit.jpg", &exit, &exit_length) != STREAMDECK_OK)
     {
         error_exit("Failed to read exit image");
     }
@@ -74,9 +74,12 @@ int main(int argc, char *argv[])
     while(!is_exit)
     {
         char keys[NUMBER_OF_KEYS];
-        if (streamdeck_read_keys(sd, keys, NUMBER_OF_KEYS) == -1)
-        {
-            break;
+        int number_pressed = streamdeck_read_keys(sd, keys, NUMBER_OF_KEYS);
+        if (number_pressed==STREAMDECK_ERROR) {
+            error_exit("Failed to read keys");
+        }
+        if (number_pressed>2) {
+            continue;
         }
 
         int i;
